@@ -1,5 +1,6 @@
 # import json
 # from urllib.request import urlopen
+import datetime
 from typing import Literal
 from django.db.models import QuerySet, Q
 
@@ -13,10 +14,13 @@ from io import BytesIO
 import pandas as pd
 
 
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest, release_date:datetime.date = None) -> HttpResponse:
     query = request.GET.get("query", "").strip()
     
     song_qs: QuerySet = Song.objects.all()
+    
+    if release_date:
+        song_qs = song_qs.filter(release_date=release_date)
     
     # melon_chart_url = "https://raw.githubusercontent.com/pyhub-kr/dump-data/main/melon/melon-20230910.json"
     # json_string = urlopen(melon_chart_url).read().decode("utf-8")
